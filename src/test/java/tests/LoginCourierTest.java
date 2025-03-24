@@ -20,12 +20,14 @@ public class LoginCourierTest {
     private Integer courierId;
     private String login;
     private String password;
+    private String wrongPass;
 
     @Before
     public void setUp() {
         courierApi = new CourierApi();
         login = "existingCourier_" + System.currentTimeMillis();
         password = "password123";
+        wrongPass = "password321";
         courierId = createCourier(login, password);
     }
 
@@ -57,6 +59,16 @@ public class LoginCourierTest {
         Response response = loginCourier(new CourierData(login, null));
         response.then().statusCode(SC_BAD_REQUEST)
                 .body("message", equalTo("Недостаточно данных для входа"));
+    }
+
+    @Test
+    @DisplayName("Ошибка авторизации курьера")
+    @Description("Проверка авторизации созданного курьера с неверными данными")
+    public void failCourierLoginTest() {
+        CourierData courierData = new CourierData(login, wrongPass);
+        Response loginResponse = loginCourier(courierData);
+        loginResponse.then().statusCode(SC_BAD_REQUEST)
+                .body("message", equalTo("Неверно указаны логин или пароль"));
     }
 
     @Step("Создание курьера с логином: {login} и паролем: {password}")

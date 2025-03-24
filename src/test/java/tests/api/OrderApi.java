@@ -7,8 +7,7 @@ import tests.models.OrderData;
 
 import static io.restassured.RestAssured.given;
 
-public class OrderApi {
-    private static final String BASE_URL = "https://qa-scooter.praktikum-services.ru/api/v1/orders";
+public class OrderApi extends BaseApi {
 
     @Step("Создание заказа")
     public Response createOrder(OrderData orderData) {

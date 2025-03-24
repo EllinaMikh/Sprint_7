@@ -7,8 +7,8 @@ import tests.models.CourierData;
 
 import static io.restassured.RestAssured.given;
 
-public class CourierApi {
-    private static final String BASE_URL = "https://qa-scooter.praktikum-services.ru/api/v1/courier";
+public class CourierApi extends BaseApi
+{
 
     @Step("Создание курьера")
     public Response createCourier(CourierData courierData) {
