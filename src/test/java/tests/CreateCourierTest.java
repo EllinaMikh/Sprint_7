@@ -56,14 +56,19 @@ public class CreateCourierTest {
     }
 
     @Test
-    @DisplayName("Создание курьера без обязательных полей")
-    @Description("Проверка создания курьера без логина или пароля")
-    public void courierCreationWithoutRequiredFieldsTest() {
+    @DisplayName("Создание курьера без логина")
+    @Description("Проверка создания курьера без логина")
+    public void courierCreationWithoutLoginTest() {
         CourierData courierDataWithNoLogin = new CourierData(null, password);
         Response noLoginResponse = createCourier(courierDataWithNoLogin);
         noLoginResponse.then().statusCode(SC_BAD_REQUEST)
                 .body("message", equalTo("Недостаточно данных для создания учетной записи"));
+    }
 
+    @Test
+    @DisplayName("Создание курьера без пароля")
+    @Description("Проверка создания курьера без пароля")
+    public void courierCreationWithoutPasswordTest() {
         CourierData courierDataWithNoPassword = new CourierData(login, null);
         Response noPasswordResponse = createCourier(courierDataWithNoPassword);
         noPasswordResponse.then().statusCode(SC_BAD_REQUEST)
