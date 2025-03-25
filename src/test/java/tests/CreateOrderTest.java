@@ -1,5 +1,8 @@
 package tests;
 
+import org.junit.After;
+import org.junit.Before;
+import tests.api.CourierApi;
 import tests.api.OrderApi;
 import tests.models.OrderData;
 import io.qameta.allure.Description;
@@ -13,16 +16,30 @@ import org.junit.runners.Parameterized;
 import java.util.List;
 
 import static org.apache.http.HttpStatus.SC_CREATED;
+import static org.apache.http.HttpStatus.SC_OK;
 import static org.hamcrest.Matchers.notNullValue;
 
 @RunWith(Parameterized.class)
 public class CreateOrderTest {
 
-    private final OrderApi orderApi = new OrderApi();
+    private OrderApi orderApi;
     private final OrderData orderData;
+    private Response resp;
 
     public CreateOrderTest(List<String> color) {
         this.orderData = new OrderData(color);
+    }
+
+    @Before
+    public void setUp() {
+        orderApi = new OrderApi();
+
+        resp = createOrderWithColor(orderData);
+    }
+
+    @After
+    public void tearDown() {
+        cancelOrderIfExists();
     }
 
     @Parameterized.Parameters(name = "Тестовые данные: {0}")
@@ -47,4 +64,14 @@ public class CreateOrderTest {
     private Response createOrderWithColor(OrderData orderData) {
         return orderApi.createOrder(orderData);
     }
+
+    @Step("Отмена заказа, если он был создан")
+    private void cancelOrderIfExists() {
+        int track = resp.path("track");
+        if (track != 0) {
+            orderApi.cancelOrder(track).then().statusCode(SC_OK);
+            resp = null;
+        }
+    }
+
 }

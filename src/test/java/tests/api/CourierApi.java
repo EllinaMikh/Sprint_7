@@ -4,18 +4,21 @@ import io.qameta.allure.Step;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import tests.models.CourierData;
+import tests.json.jsonDeleteCourier;
 
 import static io.restassured.RestAssured.given;
 
+
 public class CourierApi extends BaseApi
 {
+    final String URL = BASE_URL + "/courier";
 
     @Step("Создание курьера")
     public Response createCourier(CourierData courierData) {
         return given()
                 .contentType(ContentType.JSON)
                 .body(courierData) // Автоматическая сериализация CourierData
-                .post(BASE_URL);
+                .post(URL);
     }
 
     @Step("Логин курьера")
@@ -23,15 +26,15 @@ public class CourierApi extends BaseApi
         return given()
                 .contentType(ContentType.JSON)
                 .body(courierData)
-                .post(BASE_URL + "/login");
+                .post(URL + "/login");
     }
 
     @Step("Удаление курьера по ID")
     public Response deleteCourier(Integer courierId) {
-        String json = String.format("{\"id\": %d}", courierId);
+        jsonDeleteCourier json = new jsonDeleteCourier(courierId);
         return given()
                 .contentType(ContentType.JSON)
                 .body(json)
-                .delete(BASE_URL);
+                .delete(URL);
     }
 }
