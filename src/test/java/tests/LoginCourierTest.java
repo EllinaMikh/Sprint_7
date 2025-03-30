@@ -20,6 +20,7 @@ public class LoginCourierTest {
     private Integer courierId;
     private String login;
     private String password;
+    private String wrongLogin;
     private String wrongPass;
 
     @Before
@@ -27,6 +28,7 @@ public class LoginCourierTest {
         courierApi = new CourierApi();
         login = "existingCourier_" + System.currentTimeMillis();
         password = "password123";
+        wrongLogin = "login321";
         wrongPass = "password321";
         courierId = createCourier(login, password);
     }
@@ -63,8 +65,18 @@ public class LoginCourierTest {
 
     @Test
     @DisplayName("Ошибка авторизации курьера")
-    @Description("Проверка авторизации созданного курьера с неверными данными")
-    public void failCourierLoginTest() {
+    @Description("Проверка авторизации созданного курьера с неверным логином")
+    public void failCourierLoginWrongLoginTest() {
+        CourierData courierData = new CourierData(wrongLogin, password);
+        Response loginResponse = loginCourier(courierData);
+        loginResponse.then().statusCode(SC_BAD_REQUEST)
+                .body("message", equalTo("Неверно указаны логин или пароль"));
+    }
+
+    @Test
+    @DisplayName("Ошибка авторизации курьера")
+    @Description("Проверка авторизации созданного курьера с неверным паролем")
+    public void failCourierLoginWrongPasswordTest() {
         CourierData courierData = new CourierData(login, wrongPass);
         Response loginResponse = loginCourier(courierData);
         loginResponse.then().statusCode(SC_BAD_REQUEST)
