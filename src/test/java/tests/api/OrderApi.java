@@ -1,0 +1,38 @@
+package tests.api;
+
+import io.qameta.allure.Step;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
+import tests.models.OrderData;
+import tests.json.jsonCancelOrder;
+
+import static io.restassured.RestAssured.given;
+
+public class OrderApi extends BaseApi {
+    final String URL = BASE_URL + "/orders";
+
+    @Step("Создание заказа")
+    public Response createOrder(OrderData orderData) {
+        return given()
+                .contentType(ContentType.JSON)
+                .body(orderData) // Автоматическая сериализация OrderData
+                .post(URL);
+    }
+
+    @Step("Получение списка заказов")
+    public Response getOrdersList() {
+        return given()
+                .contentType(ContentType.JSON)
+                .get(URL);
+    }
+
+    @Step("Отмена заказа")
+    public Response cancelOrder(int track) {
+        jsonCancelOrder json = new jsonCancelOrder(track);
+        return given()
+                .contentType(ContentType.JSON)
+                .body(json)
+                .when()
+                .put(URL + "/cancel");
+    }
+}
